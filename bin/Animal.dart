@@ -1,6 +1,6 @@
 import 'dart:developer';
 
-class Animal{
+abstract class Animal{
 
   final int eyesNumber = 2;
 
