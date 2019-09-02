@@ -1,4 +1,7 @@
 
+import 'Bird.dart';
+import 'Todo.dart';
+
 abstract class IDartFeature {
   void runTest();
 }
@@ -62,6 +65,13 @@ class FunctionFeature extends IDartFeature {
     enableFlags();
     assert("ABC" == say("A","B",'C'));
     assert("AB" == say("A","B"));
+
+    anonymousFunc();
+    testClosure();
+    assert(null == testReturnValue());
+    testloops();
+    testConstruction();
+    testAsynchrony();
   }
 
   bool isNoble(int atomicNumber) {
@@ -97,4 +107,110 @@ class FunctionFeature extends IDartFeature {
     }
     return result;
   }
+
+  /**
+   * 匿名方法
+   */
+  void anonymousFunc() {
+    var list = ['apples', 'oranges', 'grapes', 'bananas', 'plums'];
+    list.forEach((i) {
+      print(list.indexOf(i).toString() + ': ' + i);
+    });
+  }
+
+  /**
+   * 闭包
+   */
+  void testClosure() {
+    // Create a function that adds 2.
+    var add2 = makeAdder(2);
+    print("add2 = " + add2.toString());
+    var num = add2(3);
+    print("num = " + num.toString());
+    // Create a function that adds 4.
+    var add4 = makeAdder(4);
+
+    assert(add2(3) == 5);
+    assert(add4(3) == 7);
+  }
+
+  Function makeAdder(num addBy) {
+    return (num i) => addBy + i;
+  }
+
+  testReturnValue(){
+    Bird bird = new Bird();
+    assert(100 == bird.id);
+    bird..id=101..sing();
+    assert(101 == bird.id);
+  }
+
+  testloops(){
+    var callbacks = [];
+    for (var i = 0; i < 2; i++) {
+      callbacks.add(() => print(i));
+    }
+    callbacks.forEach((c) => c());
+  }
+
+  testConstruction(){
+    var emp = new Employee.fromJson({});
+    if (emp is Person) {
+      // Type check
+      emp.firstName = 'Bob';
+    }
+    (emp as Person).firstName = 'Bob';
+  }
+
+  testAsynchrony() async {
+    var version = await lookUpVersion();
+    if (version =="1.0.1") {
+      // Do something.
+      print("lookUpVersion = " + version);
+    } else {
+      // Do something else.
+    }
+
+    printNumAsync("R1");
+    printNumAsync("R2");
+  }
+
+  printNumSync() {
+    for(int i = 0;i< 100;i++){
+      print("sync " + i.toString());
+    }
+  }
+
+  @todo("hseury", "test metadata")
+  printNumAsync(var tag)  async {
+     for(int i = 0;i< 100;i++){
+       await print(tag + " sync " + i.toString());
+    }
+  }
+
+  String lookUpVersionSync() => '1.0.0';
+
+  /*Future<String>*/ lookUpVersion() async => '1.0.1';
 }
+
+class Person {
+  String firstName;
+
+  Person.fromJson(Map data) {
+    print('in Person');
+  }
+
+  Person(){
+    print('default Person constructor');
+  }
+}
+
+class Employee extends Person {
+  // Person does not have a default constructor;
+  // you must call super.fromJson(data).
+  Employee.fromJson(Map data) {
+    print('in Employee');
+  }
+}
+
+
